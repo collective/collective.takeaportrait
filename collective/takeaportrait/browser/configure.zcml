@@ -1,0 +1,12 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="collective.takeaportrait">
+
+  <browser:resourceDirectory
+    name="collective.takeaportrait.resources"
+    directory="resources"
+    layer="..interfaces.ITakeAPortraitLayer"
+    />
+
+</configure>
