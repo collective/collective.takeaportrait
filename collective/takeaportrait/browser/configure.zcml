@@ -9,4 +9,11 @@
     layer="..interfaces.ITakeAPortraitLayer"
     />
 
+  <browser:page
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    name="updateMyPortrait"
+    class=".view.UpdatePortraitView"
+    layer="..interfaces.ITakeAPortraitLayer"    
+    permission="cmf.SetOwnProperties" />
+
 </configure>

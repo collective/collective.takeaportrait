@@ -8,13 +8,14 @@
   <five:registerPackage package="." initialize=".initialize" />
   <i18n:registerTranslations directory="locales" />
 
+  <include package="Products.CMFCore" />
   <include package=".browser" />
 
   <genericsetup:registerProfile
       name="default"
       title="collective.takeaportrait"
       directory="profiles/default"
-      description="Let site member change personal portrait using webcam"
+      description="Let site member change personal portrait using a webcam"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 

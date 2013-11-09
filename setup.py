@@ -5,14 +5,16 @@ version = '0.1.0'
 
 setup(name='collective.takeaportrait',
       version=version,
-      description="Plone site members can change personal portrait using webcam",
+      description="Plone site members can change personal portrait using a webcam",
       long_description=open("README.rst").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
         "Framework :: Plone",
+        "Framework :: Plone :: 4.3",
         "Programming Language :: Python",
+        "Programming Language :: JavaScript",
         ],
       keywords='plone webcam portrait media-capture-api',
       author='keul',
