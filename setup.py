@@ -11,6 +11,7 @@ setup(name='collective.takeaportrait',
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
+        "Development Status :: 3 - Alpha",
         "Framework :: Plone",
         "Framework :: Plone :: 4.3",
         "Programming Language :: Python",

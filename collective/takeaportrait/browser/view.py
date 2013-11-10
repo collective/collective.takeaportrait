@@ -22,4 +22,5 @@ class UpdatePortraitView(BrowserView):
 
             response = self.request.response
             response.setHeader('Content-Type', 'text/plain')
-            response.write('DONE')
+            response.write(mtool.getAuthenticatedMember().getId())
+        return ''

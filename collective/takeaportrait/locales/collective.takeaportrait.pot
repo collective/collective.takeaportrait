@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-11-03 10:08+0000\n"
+"POT-Creation-Date: 2013-11-09 17:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -13,6 +13,18 @@ msgstr ""
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.takeaportrait\n"
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Discard and redo"
+msgstr ""
+
+msgid "Ok, I like this. Save"
+msgstr ""
+
+msgid "Please, smile!"
+msgstr ""
 
 msgid "Take a photo"
 msgstr ""

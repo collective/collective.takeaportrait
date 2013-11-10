@@ -19,3 +19,15 @@ msgstr "Alternatively you can take a photo using your webcam by clicking the \"T
 
 msgid "Take a photo"
 msgstr ""
+
+msgid "Please, smile!"
+msgstr ""
+
+msgid "Discard and redo"
+msgstr ""
+
+msgid "Ok, I like this. Save"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""

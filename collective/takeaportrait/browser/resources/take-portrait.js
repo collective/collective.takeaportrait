@@ -1,39 +1,61 @@
 (function($) {
 
-    var canvas = null, portrait = null, video = null, overlay = null,
-        doPhotoButton = null, redoButton = null, savePhotoButton = null,
-        savedImageData = null,
+    var canvas = null, portrait = null, video = null, overlay = null, context = null, canvasElement = null,
+        doPhotoButton = null, redoButton = null, savePhotoButton = null, closeButton = null,
+        delaySlider = null,
+        savedImageData = null, lineThick = 4, videoStarted = false, counterToDisplay = null,
         mediaWidth = mediaHeight = 0,
         savedImageX = 0, savedImageY = 0, savedImageWidth = 0, savedImageHeight = 0,
-        lineThick = 4,
-        videoStarted = false;
+        _ = null;
+
+    /**
+     * Wait for a specific delay in seconds, show a countdown progress, then save new photo in memory
+     */
+    function doPhotoAfterDelay(delay) {
+        var startDelayTime = new Date().getTime() - 1;
+        delay = delay * 1000;
+        function timerLoop() {
+            var currentDelayTime = new Date().getTime();
+            var elapsedTime = currentDelayTime-startDelayTime;
+            if (elapsedTime>=delay) {
+                doPhotoButton.hide();
+                savePhotoButton.show();
+                closeButton.show();
+                redoButton.show();
+                delaySlider.hide();
+                var canvasElement = canvas.get(0);
+                savedImageData = context.getImageData(mediaWidth/2-savedImageWidth/2, 0+lineThick,
+                                                      savedImageWidth, savedImageHeight);
+                counterToDisplay = null;
+            } else {
+                console.log(delay-elapsedTime);
+                counterToDisplay = Math.floor((delay-elapsedTime) / 1000);
+                setTimeout(timerLoop, 50);
+            }
+        }
+        timerLoop();
+    }
     
     /**
-     * Store photo in memory
+     * Initial procedure for storing a new photo in memory
      */
     function doPhoto(event) {
         event.preventDefault();
-        doPhotoButton.hide();
-        savePhotoButton.show();
-        redoButton.show();
-        var canvasElement = canvas.get(0);
-        var context = canvasElement.getContext('2d');
-        savedImageData = context.getImageData(mediaWidth/2-savedImageWidth/2, 0+lineThick,
-                                              savedImageWidth, savedImageHeight);
+        var delay = parseInt(delaySlider.val(), 10);
+        doPhotoAfterDelay(delay);
     }
 
     /**
      * Draw guides lines for photo capture
      */
     function drawViewfinder() {
-        var context = canvas.get(0).getContext('2d');
         savedImageHeight = canvas.height() - 2 * lineThick;
         savedImageWidth = parseInt(savedImageHeight*75/100);
         savedImageX = mediaWidth/2-savedImageWidth/2;
         savedImageY = 0 + lineThick;
         context.beginPath();
         context.lineWidth = lineThick;
-        context.strokeStyle = '#74DF00';
+        context.strokeStyle = '#FFFF80';
         context.moveTo(mediaWidth/2-savedImageWidth/2-lineThick/2, 0);
         context.lineTo(mediaWidth/2-savedImageWidth/2-lineThick/2, savedImageHeight+lineThick*3/2);
         context.lineTo(mediaWidth/2+savedImageWidth/2+lineThick/2, savedImageHeight+lineThick*3/2);
@@ -43,26 +65,18 @@
             
     }
 
-    /**
-     * Draw preview of saved photo on the running video
-     */
-    function drawSavedPhoto() {
-        var context = canvas.get(0).getContext('2d');
-        context.putImageData(savedImageData, savedImageX, savedImageY)
-    }
-
     function startVideo() {
         if (videoStarted) {
             // video already inited
+            overlay.overlay().load();
             return;
         }
-        videoStarted = true;
         navigator.getUserMedia(
             {video: true, audio: false},
             function(userMedia) {
-                var context = canvas.get(0).getContext('2d');
+                videoStarted = true;
+                overlay.overlay().load();
                 var videoElement = video.get(0);
-                // portrait.hide();
                 canvas.show();
                 window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
                 video.attr('src', window.URL.createObjectURL(userMedia));
@@ -71,22 +85,33 @@
                     overlay.find('img').show();
                     function videoLoop() {
                         window.setTimeout(videoLoop, 20);
-                        // test below seems weird, but anything else really worked
+                        // test below seems weird, but anything else worked
                         if (videoElement.videoWidth>0) {
                             context.drawImage(videoElement, 0, 0, mediaWidth, mediaHeight);
                             drawViewfinder();
+                            // A Counter is running
+                            if (counterToDisplay!==null) {
+                                context.globalAlpha = 0.5;
+                                context.fillStyle = "#FFFF80";
+                                context.fillText(counterToDisplay+1, 20, 80);
+                                context.globalAlpha = 1.0;
+                            }
+                            // An image in memory: display it
                             if (savedImageData !== null) {
-                                drawSavedPhoto();
+                                context.putImageData(savedImageData, savedImageX, savedImageY);
                             }
                         }
                     }
                     doPhotoButton.show();
+                    delaySlider.show();
+                    closeButton.show();
                     videoElement.play();
                     videoLoop();
                 });
                
             },
             function(error) {
+                overlay.overlay().close();
                 if (window.console && window.console.error) {
                     window.console.error("Can't init video:" + error.code);
                 }
@@ -108,17 +133,24 @@
             dataType: 'text',
             data: {image: tmpCanvas.toDataURL('image/jpeg', 1.0)},
             success: function(data, jqXHR, textStatus) {
-                if (data==='DONE') {
-                    alert(123)
+                if (data) {
+                    if (portrait.attr('src').indexOf('/defaultUser.png')>-1) {
+                        portrait.attr('src', portal_url + '/portal_memberdata/portraits/' + data);
+                    } else{
+                        var newPortrait = portrait.clone();
+                        portrait.hide();
+                        newPortrait.attr('src', portrait.attr('src') + '?timestamp=' + new Date().getTime());
+                        portrait.after(newPortrait).remove();
+                        portrait = newPortrait;                        
+                    }
+                    redoButton.click();
+                    overlay.overlay().close();
                 }
             }
         })
     }
     
     function init() {
-        jarn.i18n.loadCatalog('collective.takeaportrait');
-        var _ = jarn.i18n.MessageFactory('collective.takeaportrait');
-
         // new help text
         var defaultUploadField = $('#form\\.portrait');
         var forHelpText = defaultUploadField.parent().prev('.formHelp');
@@ -139,6 +171,9 @@
         canvas = $('<canvas id="form.newphoto" width="' + mediaWidth +
                 '" height="' + parseInt(mediaHeight/100*90) + '"></canvas>');
         canvas.prependTo(overlay);
+        canvasElement = canvas.get(0);
+        context = canvasElement.getContext('2d');
+        context.font = "50px serif";
 
         // video
         video = $('<video id="form.video"></video>');
@@ -158,16 +193,30 @@
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
                 navigator.mozGetUserMedia || navigator.msGetUserMedia;
         
+        jarn.i18n.loadCatalog('collective.takeaportrait');
+        _ = jarn.i18n.MessageFactory('collective.takeaportrait');
+        
+        var labelShot = _('Please, smile!');
+        var labelRedo = _('Discard and redo');
+        var labelSave = _('OK, I like this. Save!');
+        var labelClose = _('Cancel');
+        
         overlay = $('<div id="newPortrait" style="display:none">' +
                 '<div style="text-align:center;">' +
-                '<button id="shot" style="display:none">' + 
-                '<img alt="" src="' + portal_url + '/++resource++collective.takeaportrait.resources/web_camera.png" />' +
+                '<input  style="display:none" type="range" id="delay" name="delay" min="0" max="10" value="3">' +
+                '</div>' +
+                '<div style="text-align:center;">' +
+                '<button id="shot" title="'+labelShot+'" style="display:none">' + 
+                '<img alt="'+labelShot+'" src="' + portal_url + '/++resource++collective.takeaportrait.resources/web_camera.png" />' +
                 '</button>' +
-                '<button id="redoPhoto" style="display:none">' + 
-                '<img alt="" src="' + portal_url + '/++resource++collective.takeaportrait.resources/repeat.png" />' +
+                '<button id="redoPhoto" title="'+labelRedo+'" style="display:none">' + 
+                '<img alt="'+labelRedo+'" src="' + portal_url + '/++resource++collective.takeaportrait.resources/repeat.png" />' +
                 '</button>' +
-                '<button id="savePhoto" style="display:none">' + 
-                '<img alt="" src="' + portal_url + '/++resource++collective.takeaportrait.resources/ok.png" />' +
+                '<button id="savePhoto" title="'+labelSave+'" style="display:none">' + 
+                '<img alt="'+labelSave+'" src="' + portal_url + '/++resource++collective.takeaportrait.resources/ok.png" />' +
+                '</button>' +
+                '<button id="closeOverlay" title="'+labelClose+'" style="display:none">' + 
+                '<img alt="'+labelClose+'" src="' + portal_url + '/++resource++collective.takeaportrait.resources/close.png" />' +
                 '</button>' +
                 '</div>' +
                 '</div>').appendTo($('body'));
@@ -175,16 +224,26 @@
         doPhotoButton = $('#shot');
         redoButton = $('#redoPhoto');
         savePhotoButton = $('#savePhoto');
+        closeButton = $('#closeOverlay');
+        delaySlider = $('#delay');
+        
         doPhotoButton.click(doPhoto);
         redoButton.click(function(event) {
             event.preventDefault();
             redoButton.hide();
             savePhotoButton.hide();
             doPhotoButton.show();
+            delaySlider.show();
+            closeButton.show();
             savedImageData = null;
         })
         savePhotoButton.click(updatePortrait);
-        
+        closeButton.click(function(event) {
+            event.preventDefault();
+            overlay.overlay().close();
+            redoButton.click();
+        });
+                
         overlay.css('width', parseInt($(document).width()/100*90)+'px');
         overlay.css('height', parseInt($( window ).height()/100*90)+'px');
         
@@ -204,7 +263,6 @@
                     mask: {loadSpeed: 200, opacity: 0.9},
                     closeOnClick: false
                });
-               overlay.overlay().load();
                startVideo();
             });
 
