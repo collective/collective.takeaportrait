@@ -1,5 +1,5 @@
 This product use super-modern browser feature for **accessing the user's webcam** (if any) to directly save a
-new portrait photo in personal preferences.
+new portrait photo inside Plone personal preferences.
 
 .. contents::
 
@@ -9,7 +9,7 @@ How it works
 Just add the product to your buildout and activate the *collective.takeaportrait* add-on.
 
 After that you will probably see a new button inside your "*Personal Information*" labeled "*Take a photo*". 
-If you don't see any button, your browser will probably not support Media Capture API; in that case.
+If you don't see any new button your browser will probably not support Media Capture API.
 
 .. image:: http://keul.it/images/plone/collective.takeaportrait/collective.takeaportrait-0.1.0-01.png
    :alt: alternate text
@@ -23,8 +23,8 @@ If you don't see any button, your browser will probably not support Media Captur
    :alt: alternate text
    :align: right
 
-When pressing the button the browser will ask you the permission to access the Webcam and you must accept this
-to continue. The security request is vendor specific.
+When pressing the button the browser will ask you the permission to access the Webcam and you must accept
+to continue. The security request format is vendor specific.
 
 When confirmed you will see the new portrait overlay, where the webcam is activated and the output stream
 is directly on your browser.
@@ -59,8 +59,10 @@ updated from the server.
 Plone integration
 =================
 
-As customizing the user preference form is something I don't like very much, this product is dove using
-pure JavaScript.
+As customizing the user preference form is something I don't like very much, this product is adding new features
+only using pure JavaScript.
+
+Tested on Plone 4.3.
 
 Browsers support
 ================
@@ -71,7 +73,8 @@ The user's browser must support `HTML Media Capture API`__ so only recent and co
 * Chrome: tested with Chrome 30 (a little slow, but works)
 * Opera: tested with Opera Next, version 18
 * Safari: no support (c'mon Apple...)
-* Internet Explorer: support is expected for Internet Explorer 31 [1]_ 
+* Internet Explorer: support is expected for Internet Explorer 31 [1]_
+* Mobile: no test done  apart Safari on iOS (and it's not working)
 
 To know if your browser is supported, see the `Can I Use`__ Web site.
 
@@ -79,5 +82,4 @@ __ http://www.w3.org/TR/html-media-capture/
 __ http://caniuse.com/stream
 
 .. [1] Microsoft said that probably the Media Capture support will be delayed to Internet Explorer 36 in case
-       the Patent War VI against Kilrathi race on Tau Ceti will not over on time.
-
+       Patent War VI against Kilrathi race on Tau Ceti will not over on time.
