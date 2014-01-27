@@ -8,6 +8,9 @@
         savedImageX = 0, savedImageY = 0, savedImageWidth = 0, savedImageHeight = 0,
         _ = null;
 
+    jarn.i18n.loadCatalog('collective.takeaportrait');
+    _ = jarn.i18n.MessageFactory('collective.takeaportrait');
+
     /**
      * Wait for a specific delay in seconds, show a countdown progress, then save new photo in memory
      */
@@ -192,31 +195,28 @@
         
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
                 navigator.mozGetUserMedia || navigator.msGetUserMedia;
-        
-        jarn.i18n.loadCatalog('collective.takeaportrait');
-        _ = jarn.i18n.MessageFactory('collective.takeaportrait');
-        
+
         var labelShot = _('Please, smile!');
         var labelRedo = _('Discard and redo');
         var labelSave = _('OK, I like this. Save!');
         var labelClose = _('Cancel');
-        
+
         overlay = $('<div id="newPortrait" style="display:none">' +
                 '<div style="text-align:center;">' +
                 '<input  style="display:none" type="range" id="delay" name="delay" min="0" max="10" value="3">' +
                 '</div>' +
                 '<div style="text-align:center;">' +
-                '<button id="shot" title="'+labelShot+'" style="display:none">' + 
-                '<img alt="'+labelShot+'" src="' + portal_url + '/++resource++collective.takeaportrait.resources/web_camera.png" />' +
+                '<button id="shot" title="' + labelShot + '" style="display:none">' + 
+                '<img alt="' + labelShot + '" src="' + portal_url + '/++resource++collective.takeaportrait.resources/web_camera.png" />' +
                 '</button>' +
-                '<button id="redoPhoto" title="'+labelRedo+'" style="display:none">' + 
-                '<img alt="'+labelRedo+'" src="' + portal_url + '/++resource++collective.takeaportrait.resources/repeat.png" />' +
+                '<button id="redoPhoto" title="' + labelRedo + '" style="display:none">' + 
+                '<img alt="' + labelRedo + '" src="' + portal_url + '/++resource++collective.takeaportrait.resources/repeat.png" />' +
                 '</button>' +
-                '<button id="savePhoto" title="'+labelSave+'" style="display:none">' + 
-                '<img alt="'+labelSave+'" src="' + portal_url + '/++resource++collective.takeaportrait.resources/ok.png" />' +
+                '<button id="savePhoto" title="' + labelSave + '" style="display:none">' + 
+                '<img alt="' + labelSave + '" src="' + portal_url + '/++resource++collective.takeaportrait.resources/ok.png" />' +
                 '</button>' +
-                '<button id="closeOverlay" title="'+labelClose+'" style="display:none">' + 
-                '<img alt="'+labelClose+'" src="' + portal_url + '/++resource++collective.takeaportrait.resources/close.png" />' +
+                '<button id="closeOverlay" title="' + labelClose + '" style="display:none">' + 
+                '<img alt="' + labelClose + '" src="' + portal_url + '/++resource++collective.takeaportrait.resources/close.png" />' +
                 '</button>' +
                 '</div>' +
                 '</div>').appendTo($('body'));
