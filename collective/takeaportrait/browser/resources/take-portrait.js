@@ -31,7 +31,6 @@
                                                       savedImageWidth, savedImageHeight);
                 counterToDisplay = null;
             } else {
-                console.log(delay-elapsedTime);
                 counterToDisplay = Math.floor((delay-elapsedTime) / 1000);
                 setTimeout(timerLoop, 50);
             }
@@ -65,7 +64,6 @@
         context.lineTo(mediaWidth/2+savedImageWidth/2+lineThick/2, lineThick/2);
         context.lineTo(mediaWidth/2-savedImageWidth/2-lineThick/2, lineThick/2);
         context.stroke();
-            
     }
 
     function startVideo() {
