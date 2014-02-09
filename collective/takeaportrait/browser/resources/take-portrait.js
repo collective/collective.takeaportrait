@@ -6,7 +6,10 @@
         savedImageData = null, lineThick = 4, videoStarted = false, counterToDisplay = null,
         mediaWidth = mediaHeight = 0,
         savedImageX = 0, savedImageY = 0, savedImageWidth = 0, savedImageHeight = 0,
-        _ = null;
+        _ = null,
+        isDragging = false, oldMousePosition = {x: 0, y: 0}, mousePosition = {x: 0, y: 0},
+        insideViewfinder = false, mouseButtonDown = false,
+        viewFinderX = 0, viewFinderXOffset = 0, oldViewFinderXOffset = 0;
 
     jarn.i18n.loadCatalog('collective.takeaportrait');
     _ = jarn.i18n.MessageFactory('collective.takeaportrait');
@@ -27,8 +30,9 @@
                 redoButton.show();
                 delaySlider.hide();
                 var canvasElement = canvas.get(0);
-                savedImageData = context.getImageData(mediaWidth/2-savedImageWidth/2, 0+lineThick,
-                                                      savedImageWidth, savedImageHeight);
+                savedImageData = context.getImageData(
+                    mediaWidth/2-savedImageWidth/2 + oldViewFinderXOffset, 0+lineThick,
+                    savedImageWidth, savedImageHeight);
                 counterToDisplay = null;
             } else {
                 counterToDisplay = Math.floor((delay-elapsedTime) / 1000);
@@ -55,15 +59,63 @@
         savedImageWidth = parseInt(savedImageHeight*75/100);
         savedImageX = mediaWidth/2-savedImageWidth/2;
         savedImageY = 0 + lineThick;
+        if (!isDragging) {
+            context.globalAlpha = 0.3;
+        }
         context.beginPath();
         context.lineWidth = lineThick;
         context.strokeStyle = '#FFFF80';
-        context.moveTo(mediaWidth/2-savedImageWidth/2-lineThick/2, 0);
-        context.lineTo(mediaWidth/2-savedImageWidth/2-lineThick/2, savedImageHeight+lineThick*3/2);
-        context.lineTo(mediaWidth/2+savedImageWidth/2+lineThick/2, savedImageHeight+lineThick*3/2);
-        context.lineTo(mediaWidth/2+savedImageWidth/2+lineThick/2, lineThick/2);
-        context.lineTo(mediaWidth/2-savedImageWidth/2-lineThick/2, lineThick/2);
+        viewFinderX = mediaWidth/2-savedImageWidth/2 + oldViewFinderXOffset + viewFinderXOffset;
+        context.moveTo(viewFinderX - lineThick/2, 0);
+        context.lineTo(viewFinderX - lineThick/2, savedImageHeight+lineThick*3/2);
+        context.lineTo(viewFinderX + savedImageWidth, savedImageHeight+lineThick*3/2);
+        context.lineTo(viewFinderX + savedImageWidth, lineThick/2);
+        context.lineTo(viewFinderX - lineThick/2, lineThick/2);
         context.stroke();
+        context.globalAlpha = 1.0;
+    }
+
+    function getMousePos(event) {
+        var rect = canvasElement.getBoundingClientRect();
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        };
+    }
+
+    function setCursorStyle(event) {
+        if (insideViewfinder) {
+            canvas.css('cursor', "ew-resize");
+        } else {
+            canvas.css('cursor', "default");
+        }
+    }
+
+    function mouseMoving(event) {
+        mousePosition = getMousePos(event)
+        insideViewfinder = mousePosition.x > viewFinderX && mousePosition.x < viewFinderX + savedImageWidth;
+        if (!insideViewfinder && mouseButtonDown) {
+            mouseUp(event);
+        }
+        setCursorStyle(event);
+        isDragging = insideViewfinder && mouseButtonDown; 
+        if (isDragging) {
+            viewFinderXOffset = mousePosition.x - oldMousePosition.x;
+        }
+    }
+    
+    function mouseDown(event) {
+        if (event.which===1) {
+            mouseButtonDown = true;
+            oldMousePosition = getMousePos(event);
+        }
+    }
+    
+    function mouseUp(event) {
+        mouseButtonDown = false;
+        oldViewFinderXOffset = oldViewFinderXOffset + viewFinderXOffset;
+        viewFinderXOffset = 0;
+        isDragging = false;
     }
 
     function startVideo() {
@@ -79,6 +131,9 @@
                 overlay.overlay().load();
                 var videoElement = video.get(0);
                 canvas.show();
+                canvas.mousemove(mouseMoving)
+                    .mousedown(mouseDown)
+                    .mouseup(mouseUp);
                 window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
                 video.attr('src', window.URL.createObjectURL(userMedia));
 
@@ -90,16 +145,18 @@
                         if (videoElement.videoWidth>0) {
                             context.drawImage(videoElement, 0, 0, mediaWidth, mediaHeight);
                             drawViewfinder();
-                            // A Counter is running
+                            // A counter is running
                             if (counterToDisplay!==null) {
                                 context.globalAlpha = 0.5;
                                 context.fillStyle = "#FFFF80";
-                                context.fillText(counterToDisplay+1, 20, 80);
+                                context.fillText(counterToDisplay + 1, 20, 80);
                                 context.globalAlpha = 1.0;
                             }
                             // An image in memory: display it
                             if (savedImageData !== null) {
-                                context.putImageData(savedImageData, savedImageX, savedImageY);
+                                context.putImageData(
+                                    savedImageData, savedImageX + oldViewFinderXOffset + viewFinderXOffset,
+                                    savedImageY);
                             }
                         }
                     }

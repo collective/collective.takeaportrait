@@ -1,11 +1,11 @@
 Changelog
 =========
 
-0.1.1 (unreleased)
+0.2.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Viewfinder can now be dragged for optimal face position
+  [keul]
 
 0.1.0 (2013-11-10)
 ------------------
