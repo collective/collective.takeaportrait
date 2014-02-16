@@ -40,7 +40,8 @@ displayed on the left (you can raise or lower the delay using the range control,
    :alt: alternate text
    :align: center
 
-Note: only the image part inside the highlight yellow section will be used as a new portrait.
+Note: only the image part inside the highlight yellow section (the viewfinder) will be used as a new portrait.
+You can move the viewfinder by drag and drop with the mouse (not working on mobile right now).
 
 After every shot taken, you can look at a preview of the image, and repeat the operation until you get a nice
 portrait.
@@ -55,6 +56,28 @@ updated from the server.
 .. image:: http://keul.it/images/plone/collective.takeaportrait/collective.takeaportrait-0.1.0-08.png
    :alt: alternate text
    :align: center
+
+Face detection
+--------------
+
+The product contains a **face detection** support, that can automatically center the viewfinder on any
+recognized face.
+
+Default implementation rely onto the `OpenCV, Computer Vision Library`__ (that must be installed
+on your Python env) and must be explicitly activated::
+
+    [instance]
+    ...
+    zcml=
+        ...
+        collective.takeaportrait.opencv
+
+__ http://docs.opencv.org/
+
+.. Note::
+    This feature in deeply experimental, a proof-of-concept not ready from production environment
+
+If you mnually move the viewfinder, the auto-center feature based on face detection will be stopped.
 
 Plone integration
 =================
