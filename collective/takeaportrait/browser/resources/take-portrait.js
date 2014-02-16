@@ -10,7 +10,7 @@
         hasDragged = false, isDragging = false, oldMousePosition = {x: 0, y: 0}, mousePosition = {x: 0, y: 0},
         insideViewfinder = false, mouseButtonDown = false,
         viewFinderX = 0, viewFinderXOffset = 0, oldViewFinderXOffset = 0
-        faceDetectionAvailable = false, wholeCaptureSavedImageData = null;
+        faceDetectionFn = null, faceDetectionAvailable = false, wholeCaptureSavedImageData = null;
 
     jarn.i18n.loadCatalog('collective.takeaportrait');
     _ = jarn.i18n.MessageFactory('collective.takeaportrait');
@@ -64,9 +64,12 @@
                         fx2 = data.position[2], fy2 = data.position[3],
                         newMid = fx1 + ((fx2 - fx1) / 2);
                     // Let's change the viewfinder position
-                    viewFinderXOffset = - (canvas.width() / 2 - newMid);
+                    //viewFinderXOffset = - (canvas.width() / 2 - newMid);
+                    oldViewFinderXOffset = - (canvas.width() / 2 - newMid);
+                    viewFinderXOffset = 0;
+
                 }
-                window.setTimeout(faceDetection, 5000);
+                faceDetectionFn = window.setTimeout(faceDetection, 5000);
             }
         });
     }
@@ -76,6 +79,7 @@
      */
     function doPhoto(event) {
         event.preventDefault();
+        clearTimeout(faceDetectionFn);
         var delay = parseInt(delaySlider.val(), 10);
         doPhotoAfterDelay(delay);
     }
@@ -177,7 +181,7 @@
                         // test below seems weird, but anything else worked
                         if (videoElement.videoWidth>0) {
                             if (firstRun && faceDetectionAvailable) {
-                                window.setTimeout(faceDetection, 3000);
+                                faceDetectionFn = window.setTimeout(faceDetection, 3000);
                             }
                             context.drawImage(videoElement, 0, 0, mediaWidth, mediaHeight);
                             drawViewfinder();
