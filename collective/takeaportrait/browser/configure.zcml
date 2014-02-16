@@ -3,17 +3,26 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="collective.takeaportrait">
 
+  <include package="Products.CMFCore" />
+
   <browser:resourceDirectory
-    name="collective.takeaportrait.resources"
-    directory="resources"
-    layer="..interfaces.ITakeAPortraitLayer"
-    />
+     name="collective.takeaportrait.resources"
+     directory="resources"
+     layer="..interfaces.ITakeAPortraitLayer"
+     />
 
   <browser:page
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    name="updateMyPortrait"
-    class=".view.UpdatePortraitView"
-    layer="..interfaces.ITakeAPortraitLayer"    
-    permission="cmf.SetOwnProperties" />
+     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+     name="update-my-portrait"
+     class=".view.UpdatePortraitView"
+     layer="..interfaces.ITakeAPortraitLayer"    
+     permission="cmf.SetOwnProperties" />
+
+  <browser:page
+     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+     name="face-detection"
+     class=".view.FaceDetectionView"
+     layer="..interfaces.ITakeAPortraitLayer"    
+     permission="cmf.SetOwnProperties" />
 
 </configure>
