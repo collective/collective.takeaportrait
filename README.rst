@@ -74,12 +74,19 @@ The user's browser must support `HTML Media Capture API`__ so only recent and co
 * Opera: tested with Opera Next, version 18
 * Safari: no support (c'mon Apple...)
 * Internet Explorer: support is expected for Internet Explorer 31 [1]_
-* Mobile: no test done  apart Safari on iOS (and it's not working)
 
 To know if your browser is supported, see the `Can I Use`__ Web site.
 
 __ http://www.w3.org/TR/html-media-capture/
 __ http://caniuse.com/stream
+
+Mobile
+------
+
+* Safari on iOS: no support 
+* Android Browser (Android 4.2.2): no support
+* Chrome on Android: tested with Chrome 32
+* Firefox: on version 27 camera seems to work but something goes wrong
 
 .. [1] Microsoft said that probably the Media Capture support will be delayed to Internet Explorer 36 in case
        Patent War VI against Kilrathi race on Tau Ceti will not over on time.
