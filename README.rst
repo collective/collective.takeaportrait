@@ -75,9 +75,13 @@ on your Python env) and must be explicitly activated::
 __ http://docs.opencv.org/
 
 .. Note::
-    This feature in deeply experimental, a proof-of-concept not ready from production environment
+    This feature in deeply experimental, a proof-of-concept not ready from production environment.
+    
+    See `Plone, HTML 5 Canvas and Face Detection with Webcam`__ article for more.
 
-If you mnually move the viewfinder, the auto-center feature based on face detection will be stopped.
+__ http://blog.keul.it/2014/02/plone-html-5-canvas-and-face-detection.html
+
+If you manually move the viewfinder, the auto-center feature based on face detection will be stopped.
 
 Plone integration
 =================
